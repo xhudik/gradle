@@ -14,6 +14,8 @@ dependencies {
     api(project(":hashing"))
     api(project(":build-operations"))
 
+    implementation(cat.groovy.core)
+
     implementation(libs.slf4jApi)
     implementation(libs.guava)
     implementation(libs.commonsLang)

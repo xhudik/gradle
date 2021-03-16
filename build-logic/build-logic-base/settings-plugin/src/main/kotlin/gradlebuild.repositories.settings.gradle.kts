@@ -66,6 +66,10 @@ gradle.beforeProject {
 }
 
 dependencyResolutionManagement {
+    versionCatalogs.create("cat") {
+        from("org.gradle:catalog")
+    }
+
     repositories {
         // Cannot use 'FAIL_ON_PROJECT_REPOS' because
         // - the 'gradle-guides-plugin' adds a repo (which it should not do)
