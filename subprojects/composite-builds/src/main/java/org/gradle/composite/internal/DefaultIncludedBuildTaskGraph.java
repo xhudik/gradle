@@ -68,6 +68,8 @@ public class DefaultIncludedBuildTaskGraph implements IncludedBuildTaskGraph {
             TaskInternal task = getTask(targetBuild, taskPath);
             if (task.getState().getFailure() != null) {
                 return IncludedBuildTaskResource.State.FAILED;
+            } else if (task.getState().getSkipped()) {
+                return IncludedBuildTaskResource.State.SKIPPED;
             } else if (task.getState().getExecuted()) {
                 return IncludedBuildTaskResource.State.SUCCESS;
             } else {

@@ -40,4 +40,12 @@ public interface TaskListenerInternal {
      */
     void afterExecute(TaskIdentity<?>  taskIdentity, TaskState state);
 
+    /**
+     * When a task is skipped due to a build failure.
+     *
+     * @param taskIdentity The identity of the task which was executed. Never null.
+     */
+    default void whenSkipped(TaskIdentity<?> taskIdentity) {
+    }
+
 }

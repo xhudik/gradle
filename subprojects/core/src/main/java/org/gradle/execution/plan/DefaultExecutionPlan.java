@@ -30,6 +30,7 @@ import org.gradle.api.NonNullApi;
 import org.gradle.api.Task;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.specs.Specs;
+import org.gradle.execution.taskgraph.TaskListenerInternal;
 import org.gradle.internal.Pair;
 import org.gradle.internal.graph.CachingDirectedGraphWalker;
 import org.gradle.internal.graph.DirectedGraphRenderer;
@@ -80,6 +81,7 @@ public class DefaultExecutionPlan implements ExecutionPlan {
     private final ExecutionNodeAccessHierarchy inputHierarchy;
     private final ExecutionNodeAccessHierarchy outputHierarchy;
     private final ExecutionNodeAccessHierarchy destroyableHierarchy;
+    private final TaskListenerInternal taskListener;
     private Spec<? super Task> filter = Specs.satisfyAll();
 
     private boolean invalidNodeRunning;
@@ -101,7 +103,8 @@ public class DefaultExecutionPlan implements ExecutionPlan {
         NodeValidator nodeValidator,
         ExecutionNodeAccessHierarchy inputHierarchy,
         ExecutionNodeAccessHierarchy outputHierarchy,
-        ExecutionNodeAccessHierarchy destroyableHierarchy
+        ExecutionNodeAccessHierarchy destroyableHierarchy,
+        TaskListenerInternal taskListener
     ) {
         this.displayName = displayName;
         this.taskNodeFactory = taskNodeFactory;
@@ -110,6 +113,7 @@ public class DefaultExecutionPlan implements ExecutionPlan {
         this.inputHierarchy = inputHierarchy;
         this.outputHierarchy = outputHierarchy;
         this.destroyableHierarchy = destroyableHierarchy;
+        this.taskListener = taskListener;
     }
 
     @Override
@@ -877,6 +881,9 @@ public class DefaultExecutionPlan implements ExecutionPlan {
             if (node.isRequired()) {
                 node.skipExecution(this::recordNodeCompleted);
                 aborted = true;
+                if (node instanceof TaskNode) {
+                    taskListener.whenSkipped(((TaskNode) node).getTask().getTaskIdentity());
+                }
             }
 
             // If abortAll is set, also stop enforced tasks.

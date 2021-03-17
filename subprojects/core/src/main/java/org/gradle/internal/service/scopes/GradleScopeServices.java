@@ -238,7 +238,8 @@ public class GradleScopeServices extends DefaultServiceRegistry {
         GradleInternal gradleInternal,
         TaskNodeFactory taskNodeFactory,
         TaskDependencyResolver dependencyResolver,
-        ExecutionNodeAccessHierarchies executionNodeAccessHierarchies
+        ExecutionNodeAccessHierarchies executionNodeAccessHierarchies,
+        TaskListenerInternal taskListener
     ) {
         return new DefaultExecutionPlan(
             gradleInternal.getIdentityPath().toString(),
@@ -247,7 +248,8 @@ public class GradleScopeServices extends DefaultServiceRegistry {
             new DefaultNodeValidator(),
             executionNodeAccessHierarchies.getInputHierarchy(),
             executionNodeAccessHierarchies.getOutputHierarchy(),
-            executionNodeAccessHierarchies.getDestroyableHierarchy()
+            executionNodeAccessHierarchies.getDestroyableHierarchy(),
+            taskListener
         );
     }
 

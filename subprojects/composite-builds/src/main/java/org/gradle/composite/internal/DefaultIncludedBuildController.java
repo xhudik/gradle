@@ -48,6 +48,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static org.gradle.composite.internal.IncludedBuildTaskResource.State.FAILED;
+import static org.gradle.composite.internal.IncludedBuildTaskResource.State.SKIPPED;
 import static org.gradle.composite.internal.IncludedBuildTaskResource.State.SUCCESS;
 import static org.gradle.composite.internal.IncludedBuildTaskResource.State.WAITING;
 
@@ -245,6 +246,21 @@ class DefaultIncludedBuildController implements Runnable, Stoppable, IncludedBui
         coordinationService.notifyStateChange();
     }
 
+    private void taskSkipped(String task) {
+        lock.lock();
+        try {
+            TaskState taskState = tasks.get(task);
+            if (taskState == null) {
+                taskState = new TaskState();
+                tasks.put(task, taskState);
+            }
+            taskState.status = TaskStatus.SKIPPED;
+        } finally {
+            lock.unlock();
+        }
+        coordinationService.notifyStateChange();
+    }
+
     private void tasksDone(Collection<String> tasksExecuted, @Nullable RuntimeException failure) {
         boolean someTasksNotCompleted = false;
         lock.lock();
@@ -298,6 +314,9 @@ class DefaultIncludedBuildController implements Runnable, Stoppable, IncludedBui
             if (state.status == TaskStatus.FAILED) {
                 return FAILED;
             }
+            if (state.status == TaskStatus.SKIPPED) {
+                return SKIPPED;
+            }
             if (state.status == TaskStatus.SUCCESS) {
                 return SUCCESS;
             }
@@ -311,7 +330,7 @@ class DefaultIncludedBuildController implements Runnable, Stoppable, IncludedBui
         return new IllegalStateException("Included build task '" + taskPath + "' was never scheduled for execution.");
     }
 
-    private enum TaskStatus {QUEUED, EXECUTING, FAILED, SUCCESS}
+    private enum TaskStatus {QUEUED, EXECUTING, FAILED, SKIPPED, SUCCESS}
 
     private static class TaskState {
         public BuildResult result;
@@ -342,6 +361,11 @@ class DefaultIncludedBuildController implements Runnable, Stoppable, IncludedBui
         public void afterExecute(TaskIdentity<?> taskIdentity, org.gradle.api.tasks.TaskState state) {
             Throwable failure = state.getFailure();
             taskCompleted(taskIdentity.getTaskPath(), failure);
+        }
+
+        @Override
+        public void whenSkipped(TaskIdentity<?> taskIdentity) {
+            taskSkipped(taskIdentity.getTaskPath());
         }
     }
 }
