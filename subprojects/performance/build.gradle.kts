@@ -24,3 +24,9 @@ dependencies {
         because("IDE tests use the Tooling API.")
     }
 }
+
+tasks.excludeRuleMergingBuildPerformanceTest {
+   outputs.upToDateWhen({ false })
+   outputs.cacheIf("never", { false })
+}
+
