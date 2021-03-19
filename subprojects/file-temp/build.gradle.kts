@@ -28,5 +28,4 @@ dependencies {
 
     implementation(libs.inject)
 
-    testFixturesImplementation(libs.jetbrainsAnnotations)
 }

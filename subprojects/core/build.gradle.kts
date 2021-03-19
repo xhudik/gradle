@@ -102,9 +102,6 @@ dependencies {
     testFixturesApi(project(":file-collections")) {
         because("test fixtures expose file collection types")
     }
-    testFixturesApi(project(":file-temp")) {
-        because("test fixtures expose temp file types")
-    }
     testFixturesApi(project(":resources")) {
         because("test fixtures expose file resource types")
     }
