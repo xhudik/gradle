@@ -17,12 +17,10 @@
 package org.gradle.integtests.resolve.catalog
 
 import org.gradle.integtests.fixtures.AbstractHttpDependencyResolutionTest
-import org.gradle.integtests.fixtures.FeaturePreviewsFixture
 import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
 import org.gradle.integtests.fixtures.UnsupportedWithConfigurationCache
 import org.gradle.test.fixtures.file.LeaksFileHandles
 import spock.lang.Issue
-
 /**
  * This test isn't meant to check the behavior of the extension generation like the other
  * integration tests in this package, but only what is very specific to the Kotlin DSL.
@@ -34,7 +32,6 @@ class KotlinDslVersionCatalogExtensionIntegrationTest extends AbstractHttpDepend
         settingsKotlinFile << """
             rootProject.name = "test"
         """
-        FeaturePreviewsFixture.enableVersionCatalog(settingsKotlinFile)
         settingsKotlinFile << """
             dependencyResolutionManagement {
                 repositories {
@@ -43,6 +40,7 @@ class KotlinDslVersionCatalogExtensionIntegrationTest extends AbstractHttpDepend
                     }
                 }
             }
+            enableFeaturePreview("VERSION_CATALOGS")
         """
     }
 

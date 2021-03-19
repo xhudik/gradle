@@ -29,10 +29,4 @@ enableFeaturePreview('GROOVY_COMPILATION_AVOIDANCE')
             enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
 """
     }
-
-    static void enableVersionCatalog(File settings) {
-        settings << """
-            enableFeaturePreview("VERSION_CATALOGS")
-        """
-    }
 }

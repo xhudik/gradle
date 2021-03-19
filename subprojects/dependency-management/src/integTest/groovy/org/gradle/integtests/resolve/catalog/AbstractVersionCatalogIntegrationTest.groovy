@@ -31,7 +31,9 @@ abstract class AbstractVersionCatalogIntegrationTest extends AbstractHttpDepende
         settingsFile << """
             rootProject.name = 'test'
         """
-        FeaturePreviewsFixture.enableVersionCatalog(settingsFile)
+        settingsFile << """
+            enableFeaturePreview("VERSION_CATALOGS")
+        """
         settingsFile << """
             dependencyResolutionManagement {
                 repositories {
