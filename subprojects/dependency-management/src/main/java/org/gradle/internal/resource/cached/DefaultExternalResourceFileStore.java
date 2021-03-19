@@ -19,6 +19,7 @@ import org.apache.commons.lang.StringUtils;
 import org.gradle.api.Namer;
 import org.gradle.api.internal.artifacts.ivyservice.ArtifactCacheMetadata;
 import org.gradle.api.internal.file.temp.TemporaryFileProvider;
+import org.gradle.api.internal.file.temp.TmpDirTemporaryFileProvider;
 import org.gradle.internal.file.FileAccessTimeJournal;
 import org.gradle.internal.hash.ChecksumService;
 import org.gradle.internal.resource.local.GroupedAndNamedUniqueFileStore;
@@ -58,7 +59,7 @@ public class DefaultExternalResourceFileStore extends GroupedAndNamedUniqueFileS
         private final ChecksumService checksumService;
 
         @Inject
-        public Factory(TemporaryFileProvider temporaryFileProvider, FileAccessTimeJournal fileAccessTimeJournal, ChecksumService checksumService) {
+        public Factory(TmpDirTemporaryFileProvider temporaryFileProvider, FileAccessTimeJournal fileAccessTimeJournal, ChecksumService checksumService) {
             this.temporaryFileProvider = temporaryFileProvider;
             this.fileAccessTimeJournal = fileAccessTimeJournal;
             this.checksumService = checksumService;

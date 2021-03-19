@@ -79,6 +79,7 @@ public class TempDirectoryCreationControlTest {
     @ArchTest
     public static final ArchRule forbid_illegal_calls_to_Files_createTempDirectory =
         classes()
+            .that(doNot(belongToAnyOf(org.gradle.api.internal.file.temp.TmpDirTemporaryFileProvider.class)))
             .should(not(callMethod(Files.class, "createTempDirectory", String.class, FileAttribute[].class)))
             .because(RATIONALE);
 
