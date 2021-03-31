@@ -26,6 +26,8 @@ class StagePasses(model: CIBuildModel, stage: Stage, prevStage: Stage?, stagePro
     id(stageTriggerId(model, stage))
     name = stage.stageName.stageName + " (Trigger)"
 
+    type = Type.COMPOSITE
+
     applyDefaultSettings()
     artifactRules = "subprojects/base-services/build/generated-resources/build-receipt/org/gradle/build-receipt.properties"
 
