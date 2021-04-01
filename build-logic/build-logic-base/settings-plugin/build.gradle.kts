@@ -1,6 +1,5 @@
 plugins {
-    `kotlin-dsl`
-    `groovy-gradle-plugin`
+    id("groovy-gradle-plugin")
 }
 
 java {
