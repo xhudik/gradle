@@ -16,12 +16,13 @@
 
 package org.gradle.api.tasks
 
-import org.gradle.api.file.CopySpec
+
 import org.gradle.api.internal.DocumentationRegistry
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.integtests.fixtures.AbstractIntegrationSpec
 import org.gradle.integtests.fixtures.TestResources
 import org.gradle.integtests.fixtures.ToBeFixedForConfigurationCache
+import org.gradle.util.GradleVersion
 import org.gradle.util.Matchers
 import org.gradle.util.ToBeImplemented
 import org.junit.Rule
@@ -1474,7 +1475,7 @@ class CopyTaskIntegrationSpec extends AbstractIntegrationSpec {
         fails 'copy'
 
         then:
-        failure.assertHasCause "Entry path/file.txt is a duplicate but no duplicate handling strategy has been set. Please refer to ${DOCUMENTATION_REGISTRY.getDslRefForProperty(CopySpec.class, "duplicatesStrategy")} for details."
+        failure.assertHasCause "Entry path/file.txt is a duplicate but no duplicate handling strategy has been set. Please refer to https://docs.gradle.org/${GradleVersion.current().version}/userguide/upgrading_version_5.html#implicit_duplicate_strategy_for_copy_or_archive_tasks_has_been_deprecated for details."
 
         when:
         buildFile << """
