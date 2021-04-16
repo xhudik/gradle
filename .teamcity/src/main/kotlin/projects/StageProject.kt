@@ -91,6 +91,10 @@ class StageProject(model: CIBuildModel, functionalTestBucketProvider: Functional
             if (crossVersionTests.size > 1) {
                 buildType(PartialTrigger("All Cross-Version Tests for ${stage.stageName.stageName}", "Stage_${stage.stageName.id}_CrossVersionTests", model, crossVersionTests))
             }
+            val configCacheTests = (functionalTests + specificBuildTypes).filter { it.name.toLowerCase().contains("configcache") }
+            if (configCacheTests.size > 1) {
+                buildType(PartialTrigger("All ConfigCache Tests for ${stage.stageName.stageName}", "Stage_${stage.stageName.id}_ConfigCacheTests", model, configCacheTests))
+            }
             if (specificBuildTypes.size > 1) {
                 buildType(PartialTrigger("All Specific Builds for ${stage.stageName.stageName}", "Stage_${stage.stageName.id}_SpecificBuilds", model, specificBuildTypes))
             }
@@ -101,7 +105,12 @@ class StageProject(model: CIBuildModel, functionalTestBucketProvider: Functional
     }
 
     private
-    fun createPerformanceTests(model: CIBuildModel, performanceTestBucketProvider: PerformanceTestBucketProvider, stage: Stage, performanceTestCoverage: PerformanceTestCoverage): PerformanceTestsPass {
+    fun createPerformanceTests(
+        model: CIBuildModel,
+        performanceTestBucketProvider: PerformanceTestBucketProvider,
+        stage: Stage,
+        performanceTestCoverage: PerformanceTestCoverage
+    ): PerformanceTestsPass {
         val performanceTestProject = AutomaticallySplitPerformanceTestProject(model, performanceTestBucketProvider, stage, performanceTestCoverage)
         subProject(performanceTestProject)
         return PerformanceTestsPass(model, performanceTestProject).also(this::buildType)
@@ -117,19 +126,20 @@ class StageProject(model: CIBuildModel, functionalTestBucketProvider: Functional
     }
 
     private
-    fun createFlameGraphBuild(model: CIBuildModel, stage: Stage, flameGraphGenerationBuildSpec: FlameGraphGeneration.FlameGraphGenerationBuildSpec, bucketIndex: Int): PerformanceTest = flameGraphGenerationBuildSpec.run {
-        PerformanceTest(
-            model,
-            stage,
-            flameGraphGenerationBuildSpec,
-            description = "Flame graphs with $profiler for ${performanceScenario.scenario.scenario} | ${performanceScenario.testProject} on ${os.asName()} (bucket $bucketIndex)",
-            performanceSubProject = "performance",
-            bucketIndex = bucketIndex,
-            extraParameters = "--profiler $profiler --tests \"${performanceScenario.scenario.className}.${performanceScenario.scenario.scenario}\"",
-            testProjects = listOf(performanceScenario.testProject),
-            performanceTestTaskSuffix = "PerformanceAdHocTest"
-        )
-    }
+    fun createFlameGraphBuild(model: CIBuildModel, stage: Stage, flameGraphGenerationBuildSpec: FlameGraphGeneration.FlameGraphGenerationBuildSpec, bucketIndex: Int): PerformanceTest =
+        flameGraphGenerationBuildSpec.run {
+            PerformanceTest(
+                model,
+                stage,
+                flameGraphGenerationBuildSpec,
+                description = "Flame graphs with $profiler for ${performanceScenario.scenario.scenario} | ${performanceScenario.testProject} on ${os.asName()} (bucket $bucketIndex)",
+                performanceSubProject = "performance",
+                bucketIndex = bucketIndex,
+                extraParameters = "--profiler $profiler --tests \"${performanceScenario.scenario.className}.${performanceScenario.scenario.scenario}\"",
+                testProjects = listOf(performanceScenario.testProject),
+                performanceTestTaskSuffix = "PerformanceAdHocTest"
+            )
+        }
 }
 
 private fun FunctionalTestProject.addDependencyForAllBuildTypes(dependency: IdOwner) =
